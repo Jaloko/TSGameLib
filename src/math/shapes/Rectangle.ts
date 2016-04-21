@@ -20,12 +20,26 @@ class Rectangle {
         return new Point(x, y);
     }
 
+    points(): Point[] {
+        var p2 = new Point(this.pos.x + this.size.width, this.pos.y);
+        var p3 = new Point(this.pos.x + this.size.width, this.pos.y + this.size.height);
+        var p4 = new Point(this.pos.x, this.pos.y + this.size.height);
+        return [this.pos, p2, p3, p4];
+    }
+
+    collides(circle: Circle): boolean;
     collides(rectangle: Rectangle): boolean;
     collides(pos: Point): boolean;
     collides(pos: Point, size: Size): boolean;
     collides(obj: any, size?: Size): boolean {
+        // Is given a Circle
+        if(obj instanceof Circle) {
+            let points = this.points();
+            return obj.collides(points[0]) || obj.collides(points[1]) || 
+                obj.collides(points[2]) || obj.collides(points[3]);
+        } 
         // Is given a Rectangle
-        if (obj instanceof Rectangle) {
+        else if (obj instanceof Rectangle) {
             return this.collision(obj.pos.x, obj.pos.y, obj.size.width, obj.size.height);
         } else if (obj instanceof Point) {
             // Is given a Point and a Size

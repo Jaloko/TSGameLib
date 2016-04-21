@@ -10,7 +10,7 @@ function resetTestVariables(amount) {
 * Point class test
 **/
 function pointTest() {
-    resetTestVariables(1);
+    resetTestVariables(2);
     // Constructor
     var pointVal = 0;
     var p = new Point(pointVal, pointVal);
@@ -20,6 +20,32 @@ function pointTest() {
     } else {
         console.error("Point constructor test failed.");
         console.error("Result:", p.x === pointVal, p.y === pointVal);
+    }
+
+    // add() method test
+    var xVal = 5;
+    var yVal = 5;
+    p.add(new Point(xVal, yVal));
+    var p1 = new Point(p.x, p.y);
+    p.add(new Size(xVal, yVal));
+    var p2 = new Point(p.x, p.y);
+    p.add(xVal, yVal);
+    var p3 = new Point(p.x, p.y);
+    if(p1.x === xVal && p1.y === yVal &&
+       p2.x === xVal * 2 && p2.y === yVal * 2 &&
+       p3.x === xVal * 3 && p3.y === yVal * 3) {
+        testsPassed++;
+    } else {
+        console.error("Point add() method test failed.");
+        console.error(
+            "Result:",
+            p1.x === xVal,
+            p1.y === yVal,
+            p2.x === xVal * 2,
+            p2.y === yVal * 2,
+            p3.x === xVal * 3,
+            p3.y === yVal * 3
+        ); 
     }
 
     if(testsPassed === numOfTests) {
@@ -92,14 +118,21 @@ function rectangleTest() {
     }
 
     // collides() method test
+    var cTest = new Circle(new Point(30, 30), 50);
     var pTest = new Point(25, 25);
     var sTest = new Size(50, 50);
     var rTest = new Rectangle(pTest, sTest);
-    if(r.collides(rTest) && r.collides(pTest) && r.collides(pTest, sTest)) {
+    if(r.collides(cTest) && r.collides(rTest) && r.collides(pTest) && r.collides(pTest, sTest)) {
         testsPassed++; 
     } else {
         console.error("Rectangle collides method test failed.");
-        console.error("Result:", r.collides(rTest), r.collides(pTest), r.collides(pTest, sTest));
+        console.error(
+            "Result:", 
+            r.collides(cTest),
+            r.collides(rTest),
+            r.collides(pTest),
+            r.collides(pTest, sTest)
+        );
     }
 
     if(testsPassed === numOfTests) {
@@ -137,14 +170,14 @@ function circleTest() {
     }
 
     // collides() method test
-    var pTest = new Point(40, 40);
-    var pTest2 = new Point(60, 60)
+    var pTest = new Point(35, 35);
     var rTest = 25;
-    if(c.collides(pTest) && c.collides(pTest2, rTest)) {
+    var cTest = new Circle(pTest, rTest);
+    if(c.collides(cTest) && c.collides(pTest) && c.collides(pTest, rTest)) {
         testsPassed++;
     } else {
         console.error("Circle collides method test failed.");
-        console.error("Result:", c.collides(pTest));
+        console.error("Result:", c.collides(cTest), c.collides(pTest), c.collides(pTest, rTest));
     }
 
     if(testsPassed === numOfTests) {

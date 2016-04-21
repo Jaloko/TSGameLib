@@ -1,4 +1,8 @@
 class Circle {
+    // The circle position currently goes from the top left of the circle.
+    // This is so when it comes to rendering sprites you won't have to offset
+    // the radius from the position each time.
+    // This may be changed in the future.
     pos: Point;
     radius: number;
 
@@ -11,16 +15,21 @@ class Circle {
         return new Point(this.pos.x + this.radius, this.pos.y + this.radius);
     }
 
+    collides(circle: Circle): boolean;
     collides(pos: Point): boolean;
     collides(pos: Point, radius: number): boolean;
-    collides(pos: Point, radius?:number): boolean {
+    collides(obj: any, radius?:number): boolean {
+        // Is given a Circle
+        if(obj instanceof Circle) {
+            return this.collision(obj.center().x, obj.center().y, obj.radius);
+        } 
         // Is given a Point and radius
-        if(radius != null) {
-            return this.collision(pos.x, pos.y, radius);
+        else if(obj instanceof Point && radius != null) {
+            return this.collision(obj.x + radius, obj.y + radius, radius);
         } 
         // Is only given a Point
-        else {
-            return this.collision(pos.x, pos.y);
+        else if (obj instanceof Point) {
+            return this.collision(obj.x, obj.y);  
         }
     }
 

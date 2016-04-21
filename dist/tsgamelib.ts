@@ -6,6 +6,35 @@ class Point {
         this.x = x;
         this.y = y;
     }
+
+    add(point: Point): void;
+    add(size: Size): void;
+    add(x: number, y: number): void;
+    add(obj1: any, obj2?: any): void {
+        // Is only given a Point
+        if (obj1 instanceof Point && obj2 == null) {
+            this.addX(obj1.x);
+            this.addY(obj1.y);
+        }
+        // Is only given a Size
+        else if (obj1 instanceof Size && obj2 == null) {
+            this.addX(obj1.width);
+            this.addY(obj1.height);
+        }
+        // Is given two numbers
+        else if(typeof obj1 == "number" && typeof obj2 == "number") {
+            this.addX(obj1);
+            this.addY(obj2);
+        }
+    }
+
+    addX(x: number): void {
+        this.x += x;
+    }
+
+    addY(y: number): void {
+        this.y += y;
+    }
 }
 class Size {
     width: number;
@@ -17,6 +46,10 @@ class Size {
     }
 }
 class Circle {
+    // The circle position currently goes from the top left of the circle.
+    // This is so when it comes to rendering sprites you won't have to offset
+    // the radius from the position each time.
+    // This may be changed in the future.
     pos: Point;
     radius: number;
 
@@ -29,16 +62,21 @@ class Circle {
         return new Point(this.pos.x + this.radius, this.pos.y + this.radius);
     }
 
+    collides(circle: Circle): boolean;
     collides(pos: Point): boolean;
     collides(pos: Point, radius: number): boolean;
-    collides(pos: Point, radius?:number): boolean {
+    collides(obj: any, radius?:number): boolean {
+        // Is given a Circle
+        if(obj instanceof Circle) {
+            return this.collision(obj.center().x, obj.center().y, obj.radius);
+        } 
         // Is given a Point and radius
-        if(radius != null) {
-            return this.collision(pos.x, pos.y, radius);
+        else if(obj instanceof Point && radius != null) {
+            return this.collision(obj.x + radius, obj.y + radius, radius);
         } 
         // Is only given a Point
-        else {
-            return this.collision(pos.x, pos.y);
+        else if (obj instanceof Point) {
+            return this.collision(obj.x, obj.y);  
         }
     }
 
@@ -83,12 +121,26 @@ class Rectangle {
         return new Point(x, y);
     }
 
+    points(): Point[] {
+        var p2 = new Point(this.pos.x + this.size.width, this.pos.y);
+        var p3 = new Point(this.pos.x + this.size.width, this.pos.y + this.size.height);
+        var p4 = new Point(this.pos.x, this.pos.y + this.size.height);
+        return [this.pos, p2, p3, p4];
+    }
+
+    collides(circle: Circle): boolean;
     collides(rectangle: Rectangle): boolean;
     collides(pos: Point): boolean;
     collides(pos: Point, size: Size): boolean;
     collides(obj: any, size?: Size): boolean {
+        // Is given a Circle
+        if(obj instanceof Circle) {
+            let points = this.points();
+            return obj.collides(points[0]) || obj.collides(points[1]) || 
+                obj.collides(points[2]) || obj.collides(points[3]);
+        } 
         // Is given a Rectangle
-        if (obj instanceof Rectangle) {
+        else if (obj instanceof Rectangle) {
             return this.collision(obj.pos.x, obj.pos.y, obj.size.width, obj.size.height);
         } else if (obj instanceof Point) {
             // Is given a Point and a Size
