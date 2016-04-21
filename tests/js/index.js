@@ -110,8 +110,54 @@ function rectangleTest() {
 }
 
 /**
+* Circle class test
+**/
+
+function circleTest() {
+    resetTestVariables(3);
+    // Constructor
+    var pointVal = 0;
+    var p = new Point(pointVal, pointVal);
+    var r = 25;
+    var c =  new Circle(p, r);
+    if(c.pos === p && c.radius === r) {
+        testsPassed++;
+    } else {
+        console.error("Circle constructor test failed.");
+        console.error("Result:", c.pos === p, c.radius === r);
+    }
+
+    // center() method test
+    var pc = new Point(p.x + r, p.y + r);
+    if(c.center().x === pc.x && c.center().y === pc.y) {
+        testsPassed++;
+    } else {
+        console.error("Circle center() method test failed.");
+        console.error("Result:", c.center().x === pc.x, c.center().y === pc.y);
+    }
+
+    // collides() method test
+    var pTest = new Point(40, 40);
+    var pTest2 = new Point(60, 60)
+    var rTest = 25;
+    if(c.collides(pTest) && c.collides(pTest2, rTest)) {
+        testsPassed++;
+    } else {
+        console.error("Circle collides method test failed.");
+        console.error("Result:", c.collides(pTest));
+    }
+
+    if(testsPassed === numOfTests) {
+        console.log("Circle test passed.");
+    } else {
+        console.error("Circle test failed.");
+    }  
+}
+
+/**
 * Execute all tests
 **/
 pointTest();
 sizeTest();
 rectangleTest();
+circleTest();
