@@ -1,12 +1,35 @@
+/**
+ * Creates a Point object
+ *
+ * @class
+ */
 class Point {
+    /**
+     * Stores x position
+     *
+     * @property x
+     * @type number
+     */
     x: number;
+    /**
+     * Stores y position
+     *
+     * @property y
+     * @type number
+     */
     y: number;
-
+    /**
+     * @constructor
+     */
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
-
+    /**
+     * Adds a x and y value to the Point object
+     * 
+     * @method add()
+     */
     add(point: Point): void;
     add(size: Size): void;
     add(x: number, y: number): void;
@@ -27,11 +50,19 @@ class Point {
             this.addY(obj2);
         }
     }
-
+    /**
+     * Adds a x value to the Point object
+     * 
+     * @method add()
+     */
     addX(x: number): void {
         this.x += x;
     }
-
+    /**
+     * Adds a y value to the Point object
+     * 
+     * @method add()
+     */
     addY(y: number): void {
         this.y += y;
     }

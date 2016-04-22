@@ -2,7 +2,8 @@
   "scripts": {
     "start":"node app.js",
     "build": "gulp",
-    "build:dev": "gulp dev"
+    "build-dev": "gulp dev",
+    "build-docs": "typedoc --out ./docs ./src"
   },
   "name": "TSGameLib",
   "version": "0.1.1",
@@ -12,6 +13,7 @@
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-uglify": "^1.4.2",
-    "gulp-tsc": "^1.1.5"
+    "gulp-tsc": "^1.1.5",
+    "typedoc": "^0.3.12"
   }
 }

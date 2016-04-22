@@ -1,6 +1,26 @@
+/**
+ * Creates a Rectangle object
+ *
+ * @class
+ */
 class Rectangle {
+    /**
+     * Stores the position (x and y)
+     *
+     * @property pos
+     * @type Point
+     */
     pos: Point;
+    /**
+     * Stores the size (width and height)
+     *
+     * @property size
+     * @type Size
+     */
     size: Size;
+    /**
+     * @constructor
+     */
     constructor(pos: Point, size: Size);
     constructor(x: number, y: number, width: number, height: number);
     constructor(obj1: any, obj2: any, width?: number, height?: number) {
@@ -13,29 +33,44 @@ class Rectangle {
         }
 
     }
-
+    /**
+     * Returns the center Point of the Rectangle
+     * 
+     * @method center()
+     * @return {Point}
+     */
     center(): Point {
         let x = this.pos.x + this.size.width / 2;
         let y = this.pos.y + this.size.height / 2;
         return new Point(x, y);
     }
-
+    /**
+     * Returns an Array of Points that make up the Rectangle
+     * 
+     * @method points()
+     * @return {Point[]}
+     */
     points(): Point[] {
         var p2 = new Point(this.pos.x + this.size.width, this.pos.y);
         var p3 = new Point(this.pos.x + this.size.width, this.pos.y + this.size.height);
         var p4 = new Point(this.pos.x, this.pos.y + this.size.height);
         return [this.pos, p2, p3, p4];
     }
-
+    /**
+     * Returns a boolean, if true means the input is colliding with the Rectangle
+     * 
+     * @method collides()
+     * @return {boolean}
+     */
     collides(circle: Circle): boolean;
     collides(rectangle: Rectangle): boolean;
     collides(pos: Point): boolean;
     collides(pos: Point, size: Size): boolean;
     collides(obj: any, size?: Size): boolean {
         // Is given a Circle
-        if(obj instanceof Circle) {
-            return this.circleCollision(obj);
-        } 
+        if (obj instanceof Circle) {
+            return this.circleAndRectCollision(obj);
+        }
         // Is given a Rectangle
         else if (obj instanceof Rectangle) {
             return this.collision(obj.pos.x, obj.pos.y, obj.size.width, obj.size.height);
@@ -50,7 +85,14 @@ class Rectangle {
             }
         }
     }
-
+    /**
+     * Returns a boolean, if true means either a Point or Rectangle is colliding 
+     * with the Rectangle
+     * 
+     * @method collision()
+     * @private
+     * @return {boolean}
+     */
     private collision(x: number, y: number, width: number, height: number): boolean {
         // Is colliding
         if (x + width >= this.pos.x &&
@@ -64,8 +106,14 @@ class Rectangle {
             return false;
         }
     }
-
-    private circleCollision(circle: Circle): boolean {
+    /**
+     * Returns a boolean, if true means a Circle is colliding with the Rectangle
+     * 
+     * @method circleAndRectCollision()
+     * @private
+     * @return {boolean}
+     */
+    private circleAndRectCollision(circle: Circle): boolean {
         let distanceX = Math.abs(circle.center().x - this.center().x);
         let distanceY = Math.abs(circle.center().y - this.center().y);
 
@@ -80,6 +128,4 @@ class Rectangle {
 
         return (cornerDistance_sq <= Math.pow(circle.radius, 2));
     }
-
-
-} 
+}   
