@@ -28,7 +28,7 @@ gulp.task('regular-build', function(){
 });
 
 gulp.task('dev-build', function(){
-    return gulp.src(config.js)
+    return gulp.src(config.ts)
         .pipe(typescript())
         .pipe(concat('tsgamelib.js'))
         .pipe(gulp.dest('dist'));

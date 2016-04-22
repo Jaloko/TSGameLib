@@ -34,9 +34,7 @@ class Rectangle {
     collides(obj: any, size?: Size): boolean {
         // Is given a Circle
         if(obj instanceof Circle) {
-            let points = this.points();
-            return obj.collides(points[0]) || obj.collides(points[1]) || 
-                obj.collides(points[2]) || obj.collides(points[3]);
+            return this.circleCollision(obj);
         } 
         // Is given a Rectangle
         else if (obj instanceof Rectangle) {
@@ -66,4 +64,22 @@ class Rectangle {
             return false;
         }
     }
+
+    private circleCollision(circle: Circle): boolean {
+        let distanceX = Math.abs(circle.center().x - this.center().x);
+        let distanceY = Math.abs(circle.center().y - this.center().y);
+
+        if (distanceX > (this.size.width / 2 + circle.radius)) { return false; }
+        if (distanceY > (this.size.height / 2 + circle.radius)) { return false; }
+
+        if (distanceX <= (this.size.width / 2)) { return true; }
+        if (distanceY <= (this.size.height / 2)) { return true; }
+
+        let cornerDistance_sq = Math.pow((distanceX - this.size.width / 2), 2) +
+            Math.pow((distanceY - this.size.height / 2), 2);
+
+        return (cornerDistance_sq <= Math.pow(circle.radius, 2));
+    }
+
+
 } 
