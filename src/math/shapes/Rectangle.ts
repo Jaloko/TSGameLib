@@ -1,3 +1,4 @@
+/// <reference path="../../../references.ts" />
 /**
  * Creates a Rectangle object
  *
@@ -5,14 +6,14 @@
  */
 class Rectangle {
     /**
-     * Stores the position (x and y)
+     * The position (x and y)
      *
      * @property pos
      * @type Point
      */
     pos: Point;
     /**
-     * Stores the size (width and height)
+     * The size (width and height)
      *
      * @property size
      * @type Size
@@ -31,7 +32,6 @@ class Rectangle {
             this.pos = new Point(obj1, obj2);
             this.size = new Size(width, height);
         }
-
     }
     /**
      * Returns the center Point of the Rectangle

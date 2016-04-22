@@ -3,7 +3,7 @@
     "start":"node app.js",
     "build": "gulp",
     "build-dev": "gulp dev",
-    "build-docs": "typedoc --out ./docs ./src"
+    "build-docs": "typedoc --target ES5 --out ./docs ./src"
   },
   "name": "TSGameLib",
   "version": "0.1.1",

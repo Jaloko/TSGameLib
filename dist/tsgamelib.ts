@@ -1,12 +1,101 @@
-class Point {
-    x: number;
-    y: number;
+/// <reference path="../../references.ts" />
+/**
+ * Creates a SoundEffect object
+ *
+ * @class
+ */
+class SoundEffect {
+    /**
+     * The file path of the sound effect
+     *
+     * @property location
+     * @type string
+     */
+    location: string;
+    /**
+     * The file path of the sound effect
+     *
+     * @property _volume
+     * @type number
+     * @private
+     */
+    private _volume: number = 1;
+    get volume(): number {
+        return this._volume;
+    }
 
+    set volume(volume: number) {
+        this._volume = volume;
+    }
+    /**
+     * Stores all instances of the sound effect
+     *
+     * @property instances
+     * @type Array
+     */
+    instances: HTMLAudioElement[]=[];
+    /**
+     * @constructor
+     */
+    constructor(location: string) {
+        this.location = location;
+        this.instances[0] = new Audio(location);
+        console.log(this.instances.length);
+    }
+    /**
+     * Creates a new instance of the audio track and plays it.
+     * Once the audio has finished playing it is removed.
+     * This allows overlap in sounds that may need to be played
+     * more than once at the same time.
+     * 
+     * @method play()
+     */
+    play() {
+        let len = this.instances.length - 1;
+        this.instances.push(new Audio(this.location));
+        this.instances[len + 1].volume = this._volume;
+        this.instances[len + 1].play();
+        // Capture the object
+        var _this = this;
+        // Remove instance when done
+        this.instances[len + 1].onended = function() {
+            _this.instances.splice(len + 1, 1);
+        }
+    }
+}
+/// <reference path="../../references.ts" />
+/**
+ * Creates a Point object
+ *
+ * @class
+ */
+class Point {
+    /**
+     * X position
+     *
+     * @property x
+     * @type number
+     */
+    x: number;
+    /**
+     * Y position
+     *
+     * @property y
+     * @type number
+     */
+    y: number;
+    /**
+     * @constructor
+     */
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
-
+    /**
+     * Adds a x and y value to the Point object
+     * 
+     * @method add()
+     */
     add(point: Point): void;
     add(size: Size): void;
     add(x: number, y: number): void;
@@ -27,47 +116,110 @@ class Point {
             this.addY(obj2);
         }
     }
-
+    /**
+     * Adds a x value to the Point object
+     * 
+     * @method add()
+     */
     addX(x: number): void {
         this.x += x;
     }
-
+    /**
+     * Adds a y value to the Point object
+     * 
+     * @method add()
+     */
     addY(y: number): void {
         this.y += y;
     }
 }
+/// <reference path="../../references.ts" />
+/**
+ * Creates a Size object
+ *
+ * @class
+ */
 class Size {
+    /**
+     * Stores a width
+     *
+     * @property width
+     * @type number
+     */
     width: number;
+    /**
+     * Stores a height
+     *
+     * @property height
+     * @type number
+     */
     height: number;
-
+    /**
+     * @constructor
+     */
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
     }
 }
+/// <reference path="../../../references.ts" />
+/**
+ * Creates a Circle object
+ *
+ * @class
+ */
 class Circle {
-    // The circle position currently goes from the top left of the circle.
-    // This is so when it comes to rendering sprites you won't have to offset
-    // the radius from the position each time.
-    // This may be changed in the future.
+    /**
+     * The position (x and y).
+     * The circle position currently goes from the top left of the circle.
+     * This is so when it comes to rendering sprites you won't have to offset
+     * the radius from the position each time.
+     * This may be changed in the future.
+     *
+     * @property pos
+     * @type Point
+     */
     pos: Point;
+    /**
+     * The radius
+     *
+     * @property radius
+     * @type number
+     */
     radius: number;
-
+    /**
+     * @constructor
+     */
     constructor(pos: Point, radius: number) {
         this.pos = pos;
         this.radius = radius;
     }
-
+    /**
+     * Returns the center Point of the Circle
+     * 
+     * @method center()
+     * @return {Point}
+     */
     center(): Point {
         return new Point(this.pos.x + this.radius, this.pos.y + this.radius);
     }
-
+    /**
+     * Returns a boolean, if true means the input is colliding with the Circle
+     * 
+     * @method collides()
+     * @return {boolean}
+     */
+    collides(rectangle: Rectangle): boolean;
     collides(circle: Circle): boolean;
     collides(pos: Point): boolean;
     collides(pos: Point, radius: number): boolean;
     collides(obj: any, radius?:number): boolean {
+        // Is given a rectangle
+        if(obj instanceof Rectangle) {
+            return obj.collides(this);
+        }
         // Is given a Circle
-        if(obj instanceof Circle) {
+        else if(obj instanceof Circle) {
             return this.collision(obj.center().x, obj.center().y, obj.radius);
         } 
         // Is given a Point and radius
@@ -79,7 +231,14 @@ class Circle {
             return this.collision(obj.x, obj.y);  
         }
     }
-
+    /**
+     * Returns a boolean, if true means either a Point or Circle is colliding 
+     * with the Circle
+     * 
+     * @method collision()
+     * @private
+     * @return {boolean}
+     */
     private collision(x: number, y: number, radius?: number) {
         var r1 = this.radius;
         // Only need second radius for circle on circle collisin
@@ -99,9 +258,30 @@ class Circle {
         } 
     }
 }
+/// <reference path="../../../references.ts" />
+/**
+ * Creates a Rectangle object
+ *
+ * @class
+ */
 class Rectangle {
+    /**
+     * The position (x and y)
+     *
+     * @property pos
+     * @type Point
+     */
     pos: Point;
+    /**
+     * The size (width and height)
+     *
+     * @property size
+     * @type Size
+     */
     size: Size;
+    /**
+     * @constructor
+     */
     constructor(pos: Point, size: Size);
     constructor(x: number, y: number, width: number, height: number);
     constructor(obj1: any, obj2: any, width?: number, height?: number) {
@@ -112,31 +292,45 @@ class Rectangle {
             this.pos = new Point(obj1, obj2);
             this.size = new Size(width, height);
         }
-
     }
-
+    /**
+     * Returns the center Point of the Rectangle
+     * 
+     * @method center()
+     * @return {Point}
+     */
     center(): Point {
         let x = this.pos.x + this.size.width / 2;
         let y = this.pos.y + this.size.height / 2;
         return new Point(x, y);
     }
-
+    /**
+     * Returns an Array of Points that make up the Rectangle
+     * 
+     * @method points()
+     * @return {Point[]}
+     */
     points(): Point[] {
         var p2 = new Point(this.pos.x + this.size.width, this.pos.y);
         var p3 = new Point(this.pos.x + this.size.width, this.pos.y + this.size.height);
         var p4 = new Point(this.pos.x, this.pos.y + this.size.height);
         return [this.pos, p2, p3, p4];
     }
-
+    /**
+     * Returns a boolean, if true means the input is colliding with the Rectangle
+     * 
+     * @method collides()
+     * @return {boolean}
+     */
     collides(circle: Circle): boolean;
     collides(rectangle: Rectangle): boolean;
     collides(pos: Point): boolean;
     collides(pos: Point, size: Size): boolean;
     collides(obj: any, size?: Size): boolean {
         // Is given a Circle
-        if(obj instanceof Circle) {
-            return this.circleCollision(obj);
-        } 
+        if (obj instanceof Circle) {
+            return this.circleAndRectCollision(obj);
+        }
         // Is given a Rectangle
         else if (obj instanceof Rectangle) {
             return this.collision(obj.pos.x, obj.pos.y, obj.size.width, obj.size.height);
@@ -151,7 +345,14 @@ class Rectangle {
             }
         }
     }
-
+    /**
+     * Returns a boolean, if true means either a Point or Rectangle is colliding 
+     * with the Rectangle
+     * 
+     * @method collision()
+     * @private
+     * @return {boolean}
+     */
     private collision(x: number, y: number, width: number, height: number): boolean {
         // Is colliding
         if (x + width >= this.pos.x &&
@@ -165,8 +366,14 @@ class Rectangle {
             return false;
         }
     }
-
-    private circleCollision(circle: Circle): boolean {
+    /**
+     * Returns a boolean, if true means a Circle is colliding with the Rectangle
+     * 
+     * @method circleAndRectCollision()
+     * @private
+     * @return {boolean}
+     */
+    private circleAndRectCollision(circle: Circle): boolean {
         let distanceX = Math.abs(circle.center().x - this.center().x);
         let distanceY = Math.abs(circle.center().y - this.center().y);
 
@@ -181,6 +388,4 @@ class Rectangle {
 
         return (cornerDistance_sq <= Math.pow(circle.radius, 2));
     }
-
-
-} 
+}   

@@ -21,7 +21,7 @@ gulp.task('clean-bundle', function(){
 
 gulp.task('regular-build', function(){
     return gulp.src(config.ts)
-        .pipe(typescript())
+        .pipe(typescript({ target: "ES5" }))
         .pipe(uglify())
         .pipe(concat('tsgamelib.js'))
         .pipe(gulp.dest('dist'));

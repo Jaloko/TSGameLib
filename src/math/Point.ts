@@ -1,3 +1,4 @@
+/// <reference path="../../references.ts" />
 /**
  * Creates a Point object
  *
@@ -5,14 +6,14 @@
  */
 class Point {
     /**
-     * Stores x position
+     * X position
      *
      * @property x
      * @type number
      */
     x: number;
     /**
-     * Stores y position
+     * Y position
      *
      * @property y
      * @type number

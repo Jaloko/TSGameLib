@@ -145,7 +145,6 @@ function rectangleTest() {
 /**
 * Circle class test
 **/
-
 function circleTest() {
     resetTestVariables(3);
     // Constructor
@@ -187,6 +186,10 @@ function circleTest() {
     }  
 }
 
+function soundeffectTest() {
+    // To do
+}
+
 /**
 * Execute all tests
 **/
@@ -194,3 +197,4 @@ pointTest();
 sizeTest();
 rectangleTest();
 circleTest();
+soundeffectTest();

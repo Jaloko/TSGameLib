@@ -1,3 +1,4 @@
+/// <reference path="../../references.ts" />
 /**
  * Creates a Size object
  *

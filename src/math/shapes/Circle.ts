@@ -1,3 +1,4 @@
+/// <reference path="../../../references.ts" />
 /**
  * Creates a Circle object
  *
@@ -5,7 +6,7 @@
  */
 class Circle {
     /**
-     * Stores the position (x and y).
+     * The position (x and y).
      * The circle position currently goes from the top left of the circle.
      * This is so when it comes to rendering sprites you won't have to offset
      * the radius from the position each time.
@@ -16,7 +17,7 @@ class Circle {
      */
     pos: Point;
     /**
-     * Stores the radius
+     * The radius
      *
      * @property radius
      * @type number
@@ -68,7 +69,7 @@ class Circle {
     }
     /**
      * Returns a boolean, if true means either a Point or Circle is colliding 
-     * with the Rectangle
+     * with the Circle
      * 
      * @method collision()
      * @private
