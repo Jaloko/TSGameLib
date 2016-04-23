@@ -82,27 +82,27 @@ class MenuManager {
      * @param ctx - canvas 2d context
      */
 	render(ctx){
-		// let menu  = this._menus[this._menuIndex]; 
+		let menu  = this._menus[this._menuIndex]; 
 		// TODO CanvasManager
-		// let center = CanvasManager.getCanvasCenter();
-		// let textToRender = menu._text;
-		// let textPositions = this.getHeightPositions(textToRender.length + 1);
+		let center = Utils.getCanvasCenter();
+		let textToRender = menu._text;
+		let textPositions = this.getHeightPositions(textToRender.length + 1);
 
-		// ctx.fillStyle = menu._fontColour;
-		// ctx.textAlign = menu._textAlign;
+		ctx.fillStyle = menu._fontColour;
+		ctx.textAlign = menu._textAlign;
 
-		// ctx.font = menu._font;
-		// for(let t = 0; t < textToRender.length; t++){
-		// 	let text ="";
-		// 	if(this._menus[this._menuIndex]._selectedText === t){
-		// 		text += `< $(textToRender[t]) >`;
-		// 	}
-		// 	else{
-		// 		text += textToRender[t];
-		// 	}
+		ctx.font = menu._font;
+		for(let t = 0; t < textToRender.length; t++){
+			let text ="";
+			if(this._menus[this._menuIndex]._selectedText === t){
+				text += `< $(textToRender[t]) >`;
+			}
+			else{
+				text += textToRender[t];
+			}
 
-		// 	ctx.fillText(text, center.x, textPositions[t+1]);
-		// }
+			ctx.fillText(text, center.x, textPositions[t+1]);
+		}
 	}
 
 	 /**
@@ -151,13 +151,13 @@ class MenuManager {
      * @return {Array}
      */
 	getHeightPositions(textCount: number){
-		// let size = CanvasManager.getCanvasSize(); // todo create canvas class
-		// let division = (size.height) / textCount;
+		let size = Utils.getCanvasSize(); // todo create canvas class
+		let division = (size.height) / textCount;
 
-		// let array = [];
-		// for(let i = 0; i < textCount; i++) {
-		// 	array.push((division * i) + (division / 2));
-		// }
-		// return array;
+		let array = [];
+		for(let i = 0; i < textCount; i++) {
+			array.push((division * i) + (division / 2));
+		}
+		return array;
 	}
 }
