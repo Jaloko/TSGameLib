@@ -1,5 +1,152 @@
 /// <reference path="../../references.ts" />
 /**
+ * Creates a Animation object
+ *
+ * @class Animation
+ */
+class Animation {
+    /**
+     * A spritesheet containing animation frames
+     *
+     * @property frames
+     * @type HTMLImageElement
+     */
+    frames: HTMLImageElement;
+    /**
+     * The current frame the animation is on
+     *
+     * @property frame
+     * @type number
+     */
+    frame: number;
+    /**
+     * The width of each frame
+     *
+     * @property width
+     * @type number
+     */
+    width: number;
+    /**
+     * The height of each frame
+     *
+     * @property height
+     * @type number
+     */
+    height: number;
+    /**
+     * Defines which x frame in the image the animation starts from
+     *
+     * @property frameXStart
+     * @type number
+     */
+    frameXStart: number;
+    /**
+     * Defines which y frame in the image the animation starts from
+     *
+     * @property frameYStart
+     * @type number
+     */
+    frameYStart: number;
+    /**
+     * Defines how many frames the animation is
+     *
+     * @property maxFrames
+     * @type number
+     */
+    maxFrames: number;
+    /**
+     * Speed in milliseconds that the frames change
+     *
+     * @property speed
+     * @type number
+     */
+    speed: number;
+    /**
+     * Stores the time the frame was last changed
+     *
+     * @property timer
+     * @type number
+     */
+    timer: number;
+    /**
+     * Stores the amount of times a full animation cycle occurs unless reset
+     *
+     * @property loop
+     * @type number
+     */
+    looped: number = 0;
+    /**
+     * @constructor
+     */
+    constructor(frames: HTMLImageElement, maxFrames: number,width: number, height: number, 
+        frameXStart: number, frameYStart: number, speed?: number) {
+        this.frames = frames;
+        this.frame = frameXStart;
+        this.width = width;
+        this.height = height;
+        this.frameXStart = frameXStart;
+        this.frameYStart = frameYStart;
+        this.maxFrames = maxFrames;
+        this.timer = new Date().getTime();
+        this.looped = 0;
+
+        if (speed != null) {
+            this.speed = speed;
+        } else {
+            this.speed = 200;
+        }
+    }
+    /**
+     * Updates the the frame the animation is on
+     *
+     * @method update()
+     */
+    update() {
+        if (new Date().getTime() > this.timer + this.speed) {
+            this.frame++;
+            if (this.frame > this.maxFrames) {
+                this.frame = this.frameXStart;
+                this.looped++;
+            }
+            this.timer = new Date().getTime();
+        }
+    }
+    /**
+     * Renders the current animation frame
+     *
+     * @method render()
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     * @param {number} x X position
+     * @param {number} y Y position
+     * @param {number} renderWidth Render width
+     * @param {number} renderHeight Render height
+     */
+    render(ctx, x, y, renderWidth, renderHeight) {
+        ctx.drawImage(
+            this.frames,
+            this.width * this.frame,
+            this.frameYStart * this.height,
+            this.width,
+            this.height,
+            x,
+            y,
+            renderWidth,
+            renderHeight
+        );
+    }
+    /**
+     * Resets the current frame and the amount of times looped
+     *
+     * @method reset()
+     */
+    reset() {
+        this.looped = 0;
+        this.frame = this.frameXStart;
+    }
+
+}
+/// <reference path="../../references.ts" />
+/**
  * Creates a SoundEffect object
  *
  * @class SoundEffect
@@ -392,6 +539,241 @@ class Size {
         this.width = width;
         this.height = height;
     }
+}
+/// <reference path="../../references.ts" />
+/**
+ * Creates a Menu Object
+ * @class
+ */
+class Menu{
+	/*
+	* Stores the font for the menu
+	* @property font
+	* @type string
+	*/
+	_font: string; 
+	/*
+	* Font Size for the text to be rendered
+	* @property fontSize
+	* @type number
+	*/
+	_fontSize: number;
+
+	/*
+	* Stores the font colour
+	* @property _fontColour
+	* @type string
+	*/
+	_fontColour: string;
+	/*
+	* The alignment of the text
+	* @property _textAlign
+	* @type string
+	*/
+	_textAlign: string;
+
+	/*
+	* Menu backgrounds could change storing the hex value allows us to change the colour at will
+	* @property backgroundColour
+	* @type string
+	*/
+	_backgroundColour: string;
+
+	/*
+	* The text to be rendered
+	* @property _text
+	* @type string[]
+	*/
+	_text: string[];
+
+	/*
+	* Selected Text, when the menu is rendered if the text is selected it will display < text > 
+	* @property _selectedText
+	* @type number
+	*/
+
+	_selectedText:number;
+
+	/**
+     * @constructor
+     * The text is its own unique string array
+     * Params is its own array 
+     * @param text Is an Array that contains the text in a simple array format not in an object
+     * @param parmas Is an object that contains the formatting for the text
+     */
+	constructor(text, params) {
+		this._text = text;
+
+		this._font = params.font;
+		this._fontSize = params.fontSize;
+		this._fontColour = params.fontColour;
+		this._textAlign = params.textAlign;
+		this._backgroundColour = params.backgroundColour;
+		this._selectedText = 0;
+	}
+}
+/// <reference path="../../references.ts" />
+/**
+ * MenuManager
+ * Manages all the menus through this manager, rather than call individual menus.
+ *
+ * @class
+ */
+class MenuManager {
+	 /**
+     * Menus stores all the menus in the game. 
+     * Start menu needs to be the first menu pushed.
+     * @property _menus
+     * @type any[]
+     */
+	_menus: any[];
+
+	 /**
+     * Menu index is the current selected menu to be rendered
+     * 
+     * @property _menuIndex
+     * @type number
+     */
+	_menuIndex: number;
+
+	/**
+	 * The game library will support various types of key inputs 
+	 * This means either 'WASD' or the arrow keys can be supported
+	 * @property _keyType
+	 * @type string
+	 */
+	_keyType: string;
+
+	 /**
+	 * All the supported keys 
+	 * 
+	 * @property _keyCodes
+	 * @type Object
+	 */
+	_keycodes = {
+		'wasd': {
+			up: 87,
+			down: 83,
+			left: 65,
+			right: 68,
+		},
+		'arrows':{
+			up: 38,
+			down: 40,
+			left: 37,
+			right: 39,
+		},
+
+		enter: 13,
+		space: 32,
+		backspace: 8,
+		shift: 16,
+		escape: 27,
+	}
+
+	constructor(menus, settings) {
+		this._menus = menus;
+		this._keyType = settings.keyType;
+
+		this._menuIndex = 0; // The start menu must always be 0
+
+	}
+	 /**
+     * Changes the current menu
+     * @method changeMenu()
+     * @param menuIndex  The menus index
+     */
+	changeMenu(menuIndex: number){
+		this._menuIndex = menuIndex;
+	}
+
+	 /**
+     * Renders the current menu to be shown
+     * This does not render
+     * TODO: CanvasManager
+     * Commented out due to it breaking the doc generator
+     * @method render()
+     * @param ctx - canvas 2d context
+     */
+	render(ctx){
+		// let menu  = this._menus[this._menuIndex]; 
+		// TODO CanvasManager
+		// let center = CanvasManager.getCanvasCenter();
+		// let textToRender = menu._text;
+		// let textPositions = this.getHeightPositions(textToRender.length + 1);
+
+		// ctx.fillStyle = menu._fontColour;
+		// ctx.textAlign = menu._textAlign;
+
+		// ctx.font = menu._font;
+		// for(let t = 0; t < textToRender.length; t++){
+		// 	let text ="";
+		// 	if(this._menus[this._menuIndex]._selectedText === t){
+		// 		text += `< $(textToRender[t]) >`;
+		// 	}
+		// 	else{
+		// 		text += textToRender[t];
+		// 	}
+
+		// 	ctx.fillText(text, center.x, textPositions[t+1]);
+		// }
+	}
+
+	 /**
+     * Changes the current selectedText item in the current menu
+     * 
+     * @method changeSelectedText()
+     * @param textIndex  Index of the text item
+     */
+	changeSelectedText(textIndex) {
+		this._menus[this._menuIndex]._selectedText = textIndex
+	}
+
+
+	/**
+     * When a keyboard event occurs this method will be triggered
+     * Only supports Up, Down and Enter currently 
+     *
+     * @method onEvent()
+     * @param event The keyboard event
+     */
+	onEvent(event: KeyboardEvent){
+		switch (event.keyCode) {
+			case this._keycodes[this._keyType].up: 
+				break;
+			
+			case this._keycodes[this._keyType].down:
+				break;
+
+			case this._keycodes[this._keyType].left: // Left
+				break;
+
+			case this._keycodes[this._keyType].right: // Right
+				break;
+
+			case this._keycodes.enter: // Enter
+				break;
+		}
+	}
+
+	/**
+     * Gets the height positions based on the number of text items in the current menu._text
+     * TODO CanvasManager	
+     * Commented out due to it breaking the doc generator
+     * @method onEvent()
+     * @param event The keyboard event
+     * @return {Array}
+     */
+	getHeightPositions(textCount: number){
+		// let size = CanvasManager.getCanvasSize(); // todo create canvas class
+		// let division = (size.height) / textCount;
+
+		// let array = [];
+		// for(let i = 0; i < textCount; i++) {
+		// 	array.push((division * i) + (division / 2));
+		// }
+		// return array;
+	}
 }
 /// <reference path="../../../references.ts" />
 /**
