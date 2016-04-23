@@ -1,4 +1,5 @@
 /// <reference path="./src/assets/Animation.ts" />
+/// <reference path="./src/assets/ImageManager.ts" />
 /// <reference path="./src/assets/SoundEffect.ts" />
 /// <reference path="./src/assets/Soundtrack.ts" />
 /// <reference path="./src/assets/SoundManager.ts" />
