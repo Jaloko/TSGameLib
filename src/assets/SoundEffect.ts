@@ -2,7 +2,7 @@
 /**
  * Creates a SoundEffect object
  *
- * @class
+ * @class SoundEffect
  */
 class SoundEffect {
     /**
@@ -90,7 +90,7 @@ class SoundEffect {
      * @param {function} func A function
      * @private
      */
-    private applyToAllInstances(func) {
+    private applyToAllInstances(func: any) {
         if (this.instances.length > 0) {
             for (let i = 0; i < this.instances.length; i++) {
                 func(this.instances[i]);

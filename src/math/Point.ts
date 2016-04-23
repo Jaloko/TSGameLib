@@ -2,7 +2,7 @@
 /**
  * Creates a Point object
  *
- * @class
+ * @class Point
  */
 class Point {
     /**

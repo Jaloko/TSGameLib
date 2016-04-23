@@ -1,7 +1,7 @@
 /**
  * Creates a Soundtrack object
  *
- * @class
+ * @class Soundtrack
  */
 class Soundtrack{
     /**

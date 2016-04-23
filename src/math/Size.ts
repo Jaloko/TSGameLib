@@ -2,7 +2,7 @@
 /**
  * Creates a Size object
  *
- * @class
+ * @class Size
  */
 class Size {
     /**

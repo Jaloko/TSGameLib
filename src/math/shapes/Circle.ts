@@ -2,7 +2,7 @@
 /**
  * Creates a Circle object
  *
- * @class
+ * @class Circle
  */
 class Circle {
     /**

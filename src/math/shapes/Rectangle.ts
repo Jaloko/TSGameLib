@@ -2,7 +2,7 @@
 /**
  * Creates a Rectangle object
  *
- * @class
+ * @class Rectangle
  */
 class Rectangle {
     /**

@@ -188,6 +188,7 @@ function circleTest() {
 
 function soundeffectTest() {
     // To do
+    var t = new Soundtrack("");
 }
 
 /**
