@@ -7,5 +7,5 @@
 /// <reference path="./src/math/Size.ts" />
 /// <reference path="./src/math/shapes/Circle.ts" />
 /// <reference path="./src/math/shapes/Rectangle.ts" />
-/// <reference path="./src/MenuManager/Menu.ts" />
-/// <reference path="./src/MenuManager/MenuManager.ts" />
+/// <reference path="./src/menu/Menu.ts" />
+/// <reference path="./src/menu/MenuManager.ts" />
