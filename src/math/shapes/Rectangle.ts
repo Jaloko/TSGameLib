@@ -51,9 +51,9 @@ class Rectangle {
      * @return {Point[]}
      */
     points(): Point[] {
-        var p2 = new Point(this.pos.x + this.size.width, this.pos.y);
-        var p3 = new Point(this.pos.x + this.size.width, this.pos.y + this.size.height);
-        var p4 = new Point(this.pos.x, this.pos.y + this.size.height);
+        let p2 = new Point(this.pos.x + this.size.width, this.pos.y);
+        let p3 = new Point(this.pos.x + this.size.width, this.pos.y + this.size.height);
+        let p4 = new Point(this.pos.x, this.pos.y + this.size.height);
         return [this.pos, p2, p3, p4];
     }
     /**

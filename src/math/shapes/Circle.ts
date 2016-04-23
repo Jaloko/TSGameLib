@@ -76,14 +76,14 @@ class Circle {
      * @return {boolean}
      */
     private collision(x: number, y: number, radius?: number) {
-        var r1 = this.radius;
+        let r1 = this.radius;
         // Only need second radius for circle on circle collisin
-        var r2 = radius != null ? radius : 0;
-        var bb = this.center().x - x;
+        let r2 = radius != null ? radius : 0;
+        let bb = this.center().x - x;
         bb = bb * bb;
-        var cc = this.center().y - y;
+        let cc = this.center().y - y;
         cc = cc * cc;
-        var d = Math.sqrt(bb + cc);
+        let d = Math.sqrt(bb + cc);
         // Is colliding
         if (r1 + r2 > d) {
             return true;

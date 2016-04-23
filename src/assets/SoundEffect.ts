@@ -6,14 +6,22 @@
  */
 class SoundEffect {
     /**
-     * The file path of the sound effect
+     * The file path
      *
-     * @property location
+     * @property src
      * @type string
      */
-    location: string;
+    src: string;
     /**
-     * The file path of the sound effect
+     * Stores all instances
+     *
+     * @property instances
+     * @type Array
+     * @private
+     */
+    private instances: HTMLAudioElement[] = [];
+    /**
+     * The volume of the sound effect
      *
      * @property _volume
      * @type number
@@ -23,24 +31,36 @@ class SoundEffect {
     get volume(): number {
         return this._volume;
     }
-
     set volume(volume: number) {
         this._volume = volume;
+        // Set volume of any active instances
+        this.applyToAllInstances(function(instance) {
+            instance.volume = volume;
+        });
     }
     /**
-     * Stores all instances of the sound effect
+     * Declares if the sound effect is muted or not
      *
-     * @property instances
-     * @type Array
+     * @property _muted
+     * @type boolean
+     * @private
      */
-    instances: HTMLAudioElement[]=[];
+    private _muted: boolean = false;
+    get muted(): boolean {
+        return this._muted;
+    }
+    set muted(muted: boolean) {
+        this._muted = muted;
+        // Set muted of any active instances
+        this.applyToAllInstances(function(instance) {
+            instance.muted = muted;
+        });
+    }
     /**
      * @constructor
      */
-    constructor(location: string) {
-        this.location = location;
-        this.instances[0] = new Audio(location);
-        console.log(this.instances.length);
+    constructor(src: string) {
+        this.src = src;
     }
     /**
      * Creates a new instance of the audio track and plays it.
@@ -52,14 +72,29 @@ class SoundEffect {
      */
     play() {
         let len = this.instances.length - 1;
-        this.instances.push(new Audio(this.location));
+        this.instances.push(new Audio(this.src));
         this.instances[len + 1].volume = this._volume;
+        this.instances[len + 1].muted = this._muted;
         this.instances[len + 1].play();
         // Capture the object
-        var _this = this;
+        let _this = this;
         // Remove instance when done
         this.instances[len + 1].onended = function() {
             _this.instances.splice(len + 1, 1);
+        }
+    }
+    /**
+     * Executes a function on all instances
+     * 
+     * @method applyToAllInstances()
+     * @param {function} func A function
+     * @private
+     */
+    private applyToAllInstances(func) {
+        if (this.instances.length > 0) {
+            for (let i = 0; i < this.instances.length; i++) {
+                func(this.instances[i]);
+            }
         }
     }
 }
