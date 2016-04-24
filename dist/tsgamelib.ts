@@ -97,7 +97,7 @@ class Animation {
         }
     }
     /**
-     * Updates the the frame the animation is on
+     * Updates the frame the animation is on
      *
      * @method update()
      */
@@ -145,6 +145,55 @@ class Animation {
     }
 
 }
+type UrlMap = { [name: string]: string };
+
+/**
+ * Manages images loaded from external URLs.
+ * 
+ * @class ImageManager
+ */
+class ImageManager {
+    private urls: UrlMap;
+    /**
+     * Loaded images accessible by name.
+     * 
+     * This property is undefined if no images have been loaded.
+     */
+    images: { [name: string]: HTMLImageElement };
+    
+    /**
+     * @constructor
+     * @param urls A collection of image names and their corresponding URLs.
+     */
+    constructor(urls: UrlMap) {
+        this.urls = urls;
+    }
+    
+    /**
+     * Loads all images from the specified URLs.
+     * 
+     * @param next Function to be called when all images have been loaded.
+     */
+    load(next: () => void): void {
+        let imageLoadedCount = 0;
+        let t = this;
+
+        for (let k in this.urls) {
+            this.images[k] = new Image();
+
+            this.images[k].onload = () => {
+                imageLoadedCount++;
+                if (imageLoadedCount == Object.keys(this.urls).length) {
+                    next();
+                }
+            }
+
+            this.images[k].src = this.urls[k];
+        }
+    }
+}
+
+
 /// <reference path="../../references.ts" />
 /**
  * Creates a SoundEffect object
@@ -443,6 +492,98 @@ class Soundtrack{
 }
 /// <reference path="../../references.ts" />
 /**
+ * Creates a Map object
+ *
+ * @class Map
+ */
+class Map {
+    /**
+     * A spritesheet containing the maps tiles
+     *
+     * @property tileSheet
+     * @type HTMLImageElement
+     */
+    tileSheet: HTMLImageElement;
+    /**
+     * The size of each individual tile on the tilesheet
+     *
+     * @property tileSize
+     * @type Size
+     */
+    tileSize: Size;
+    /**
+     * The size of each individual tile on the tilesheet
+     *
+     * @property tileSize
+     * @type Size
+     */
+    mapSize: Size;
+    /**
+     * Stores the position of the tile on the tilesheet
+     *
+     * @property tileData
+     * @type number[]
+     */
+    tileData: any[]; // Will change from any once this class is tested
+    /**
+     * Stores the entie map
+     *
+     * @property mapData
+     * @type number[]
+     */
+    mapData: number[];
+    /**
+     * @constructor
+     */
+    constructor(tileSheet: HTMLImageElement, tileSize: Size, 
+        mapSize: Size, tileData: number[], mapData: number[]) {
+        this.tileSheet = tileSheet;
+        this.tileSize = tileSize;
+        this.mapSize = mapSize;
+        this.tileData = tileData;
+        this.mapData = mapData;
+    }
+    /**
+     * Renders all tiles in the map. This method currently assumes cameraX
+     * and cameraY is at the top left corner, will probably change to the center
+     *
+     * @method render()
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     * @param {number} cameraX Camera x position
+     * @param {number} cameraY Camera y position
+     */
+    render(ctx: CanvasRenderingContext2D, cameraX: number, cameraY: number) {
+        let canvasSize = Utils.getCanvasSize();
+        let width = this.tileSize.width;
+        let height = this.tileSize.height;
+        for (let x = 0; x < this.mapSize.width; x++) {
+            for (let y = 0; y < this.mapSize.height; y++) {
+                // Dont render tiles off the screen
+                if (x * width < cameraX - width || 
+                    x * width > cameraX + canvasSize.width + width ||
+                    y * height < cameraY - height || 
+                    y * height > cameraY + canvasSize.height + height) {
+                    continue;
+                }
+                let tile = this.tileData[this.mapData[x][y]];
+                // Render tile
+                ctx.drawImage(
+                    this.tileSheet,
+                    tile.x * width,
+                    tile.y * height,
+                    width,
+                    height,
+                    x * width,
+                    y * height,
+                    width,
+                    height
+                );
+            }
+        }
+    }
+}
+/// <reference path="../../references.ts" />
+/**
  * Creates a Point object
  *
  * @class Point
@@ -696,27 +837,27 @@ class MenuManager {
      * @param ctx - canvas 2d context
      */
 	render(ctx){
-		// let menu  = this._menus[this._menuIndex]; 
+		let menu  = this._menus[this._menuIndex]; 
 		// TODO CanvasManager
-		// let center = CanvasManager.getCanvasCenter();
-		// let textToRender = menu._text;
-		// let textPositions = this.getHeightPositions(textToRender.length + 1);
+		let center = Utils.getCanvasCenter();
+		let textToRender = menu._text;
+		let textPositions = this.getHeightPositions(textToRender.length + 1);
 
-		// ctx.fillStyle = menu._fontColour;
-		// ctx.textAlign = menu._textAlign;
+		ctx.fillStyle = menu._fontColour;
+		ctx.textAlign = menu._textAlign;
 
-		// ctx.font = menu._font;
-		// for(let t = 0; t < textToRender.length; t++){
-		// 	let text ="";
-		// 	if(this._menus[this._menuIndex]._selectedText === t){
-		// 		text += `< $(textToRender[t]) >`;
-		// 	}
-		// 	else{
-		// 		text += textToRender[t];
-		// 	}
+		ctx.font = menu._font;
+		for(let t = 0; t < textToRender.length; t++){
+			let text ="";
+			if(this._menus[this._menuIndex]._selectedText === t){
+				text += `< $(textToRender[t]) >`;
+			}
+			else{
+				text += textToRender[t];
+			}
 
-		// 	ctx.fillText(text, center.x, textPositions[t+1]);
-		// }
+			ctx.fillText(text, center.x, textPositions[t+1]);
+		}
 	}
 
 	 /**
@@ -765,14 +906,48 @@ class MenuManager {
      * @return {Array}
      */
 	getHeightPositions(textCount: number){
-		// let size = CanvasManager.getCanvasSize(); // todo create canvas class
-		// let division = (size.height) / textCount;
+		let size = Utils.getCanvasSize(); // todo create canvas class
+		let division = (size.height) / textCount;
 
-		// let array = [];
-		// for(let i = 0; i < textCount; i++) {
-		// 	array.push((division * i) + (division / 2));
-		// }
-		// return array;
+		let array = [];
+		for(let i = 0; i < textCount; i++) {
+			array.push((division * i) + (division / 2));
+		}
+		return array;
+	}
+}
+class Utils{
+	 /**
+     * Gets the canvas
+     * @method getCanvas
+     * @return CanvasElement
+     */
+	static getCanvas() {
+		return document.getElementById('canvas');
+	}
+
+	/**
+     * Gets the canvas size
+     * @method getCanvasSize
+     * @return CanvasElement
+     */
+	static getCanvasSize(){
+		return {
+			width: this.getCanvas().clientWidth,
+			height: this.getCanvas().clientHeight
+		};
+	}
+
+	/**
+     * Gets the center of the canvas
+     * @method getCanvasCenter
+     * @return CanvasElement
+     */
+	static getCanvasCenter(){
+		return {
+			x: this.getCanvas().clientWidth / 2,
+			y: this.getCanvas().clientHeight / 2
+		};
 	}
 }
 /// <reference path="../../../references.ts" />

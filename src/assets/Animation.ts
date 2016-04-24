@@ -97,7 +97,7 @@ class Animation {
         }
     }
     /**
-     * Updates the the frame the animation is on
+     * Updates the frame the animation is on
      *
      * @method update()
      */
