@@ -191,6 +191,65 @@ function soundeffectTest() {
     var t = new Soundtrack("");
 }
 
+// Example level data exported from future C# app
+/*var LEVEL_DATA = {
+    tileSize: {
+        width: 16,
+        height: 16
+    },
+    mapSize: {
+        width: 20,
+        height: 7
+    },
+    tileData: [
+        { x: 2, y: 0 }
+    ],
+    mapData: [
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    ]
+}
+
+var theImage = new Image();
+theImage.src = "tiles.png"
+
+var map = new Map(
+    theImage,
+    LEVEL_DATA.tileSize,
+    LEVEL_DATA.mapSize,
+    LEVEL_DATA.tileData,
+    LEVEL_DATA.mapData
+);
+
+var ctx = document.getElementById('canvas').getContext('2d');
+var x = 0;
+function render() {
+    ctx.fillStyle="#000";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    map.render(ctx, x++, 0);
+    ctx.drawImage(
+        theImage,
+        48,
+        48,
+        16,
+        16,
+        0,
+        0,
+        16,
+        16
+    );
+    requestAnimationFrame(render);
+}
+
+theImage.onload = function() {
+    render(); 
+}*/
+
 /**
 * Execute all tests
 **/

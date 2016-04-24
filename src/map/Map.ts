@@ -73,7 +73,7 @@ class Map {
                     y * height > cameraY + canvasSize.height + height) {
                     continue;
                 }
-                let tile = this.tileData[this.mapData[x][y]];
+                let tile = this.tileData[this.mapData[y][x]];
                 // Render tile
                 ctx.drawImage(
                     this.tileSheet,
@@ -81,8 +81,8 @@ class Map {
                     tile.y * height,
                     width,
                     height,
-                    x * width,
-                    y * height,
+                    x * width - cameraX,
+                    y * height - cameraY,
                     width,
                     height
                 );
