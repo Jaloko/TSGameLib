@@ -20,7 +20,7 @@ class Map {
      */
     tileSize: Size;
     /**
-     * The size of each individual tile on the tilesheet
+     * The width and height of the entire map
      *
      * @property tileSize
      * @type Size
@@ -44,7 +44,7 @@ class Map {
      * @constructor
      */
     constructor(tileSheet: HTMLImageElement, tileSize: Size, 
-        mapSize: Size, tileData: number[], mapData: number[]) {
+        mapSize: Size, tileData: any[], mapData: number[]) {
         this.tileSheet = tileSheet;
         this.tileSize = tileSize;
         this.mapSize = mapSize;

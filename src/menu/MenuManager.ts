@@ -56,7 +56,6 @@ class MenuManager {
 		shift: 16,
 		escape: 27,
 	}
-
 	constructor(menus, settings) {
 		this._menus = menus;
 		this._keyType = settings.keyType;
@@ -72,7 +71,6 @@ class MenuManager {
 	changeMenu(menuIndex: number){
 		this._menuIndex = menuIndex;
 	}
-
 	 /**
      * Renders the current menu to be shown
      * This does not render
@@ -82,29 +80,9 @@ class MenuManager {
      * @param ctx - canvas 2d context
      */
 	render(ctx){
-		let menu  = this._menus[this._menuIndex]; 
-		// TODO CanvasManager
-		let center = Utils.getCanvasCenter();
-		let textToRender = menu._text;
-		let textPositions = this.getHeightPositions(textToRender.length + 1);
-
-		ctx.fillStyle = menu._fontColour;
-		ctx.textAlign = menu._textAlign;
-
-		ctx.font = menu._font;
-		for(let t = 0; t < textToRender.length; t++){
-			let text ="";
-			if(this._menus[this._menuIndex]._selectedText === t){
-				text += `< $(textToRender[t]) >`;
-			}
-			else{
-				text += textToRender[t];
-			}
-
-			ctx.fillText(text, center.x, textPositions[t+1]);
-		}
+		let menu = this._menus[this._menuIndex]; 
+        menu.render(ctx);
 	}
-
 	 /**
      * Changes the current selectedText item in the current menu
      * 
@@ -114,21 +92,22 @@ class MenuManager {
 	changeSelectedText(textIndex) {
 		this._menus[this._menuIndex]._selectedText = textIndex
 	}
-
-
 	/**
      * When a keyboard event occurs this method will be triggered
      * Only supports Up, Down and Enter currently 
      *
-     * @method onEvent()
+     * @method onKeyPress()
      * @param event The keyboard event
      */
-	onEvent(event: KeyboardEvent){
+	onKeyPress(event: KeyboardEvent){
+        let menu = this._menus[this._menuIndex]; 
 		switch (event.keyCode) {
 			case this._keycodes[this._keyType].up: 
+                menu.changeOption(false);
 				break;
 			
 			case this._keycodes[this._keyType].down:
+                menu.changeOption(true);
 				break;
 
 			case this._keycodes[this._keyType].left: // Left
@@ -138,26 +117,8 @@ class MenuManager {
 				break;
 
 			case this._keycodes.enter: // Enter
+                menu.executeAction();
 				break;
 		}
-	}
-
-	/**
-     * Gets the height positions based on the number of text items in the current menu._text
-     * TODO CanvasManager	
-     * Commented out due to it breaking the doc generator
-     * @method onEvent()
-     * @param event The keyboard event
-     * @return {Array}
-     */
-	getHeightPositions(textCount: number){
-		let size = Utils.getCanvasSize(); // todo create canvas class
-		let division = (size.height) / textCount;
-
-		let array = [];
-		for(let i = 0; i < textCount; i++) {
-			array.push((division * i) + (division / 2));
-		}
-		return array;
 	}
 }

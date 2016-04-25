@@ -512,7 +512,7 @@ class Map {
      */
     tileSize: Size;
     /**
-     * The size of each individual tile on the tilesheet
+     * The width and height of the entire map
      *
      * @property tileSize
      * @type Size
@@ -536,7 +536,7 @@ class Map {
      * @constructor
      */
     constructor(tileSheet: HTMLImageElement, tileSize: Size, 
-        mapSize: Size, tileData: number[], mapData: number[]) {
+        mapSize: Size, tileData: any[], mapData: number[]) {
         this.tileSheet = tileSheet;
         this.tileSize = tileSize;
         this.mapSize = mapSize;
@@ -683,75 +683,126 @@ class Size {
 }
 /// <reference path="../../references.ts" />
 /**
- * Creates a Menu Object
- * @class
+ * FontBase abstract class
+ *
+ * @class FontBase
+ * @abstract
+ */
+abstract class FontBase {
+    /**
+     * Stores the font for the menu
+     *
+     * @property font
+     * @type string
+     */
+    font: string;
+    /**
+     * Font Size for the text to be rendered
+     *
+     * @property fontSize
+     * @type number
+     */
+    fontSize: number;
+    /**
+     * Stores the font colour
+     *
+     * @property fontColour
+     * @type string
+     */
+    fontColour: string;
+    /**
+     * The alignment of the text
+     *
+     * @property textAlign
+     * @type string
+     */
+    textAlign: string;
+    /**
+     * @constructor
+     */
+    constructor(font: string, fontSize: number, fontColour: string,
+        textAlign: string) {
+        this.font = font;
+        this.fontSize = fontSize;
+        this.fontColour = fontColour;
+        this.textAlign = textAlign;
+    }
+    /**
+     * Applys the font options to the canvas context
+     *
+     * @method applyFontSettings()
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    applyFontSettings(ctx) {
+        ctx.font = this.fontSize + 'px ' + this.font;
+        ctx.fillStyle = this.fontColour;
+        ctx.textAlign = this.textAlign;
+    }
+}
+/// <reference path="../../references.ts" />
+/**
+ * Creates a Menu object
+ *
+ * @class Menu
  */
 class Menu{
-	/*
-	* Stores the font for the menu
-	* @property font
-	* @type string
-	*/
-	_font: string; 
-	/*
-	* Font Size for the text to be rendered
-	* @property fontSize
-	* @type number
-	*/
-	_fontSize: number;
-
-	/*
-	* Stores the font colour
-	* @property _fontColour
-	* @type string
-	*/
-	_fontColour: string;
-	/*
-	* The alignment of the text
-	* @property _textAlign
-	* @type string
-	*/
-	_textAlign: string;
-
-	/*
-	* Menu backgrounds could change storing the hex value allows us to change the colour at will
-	* @property backgroundColour
-	* @type string
-	*/
-	_backgroundColour: string;
-
-	/*
-	* The text to be rendered
-	* @property _text
-	* @type string[]
-	*/
-	_text: string[];
-
-	/*
-	* Selected Text, when the menu is rendered if the text is selected it will display < text > 
-	* @property _selectedText
-	* @type number
-	*/
-
-	_selectedText:number;
-
-	/**
+    title: MenuTitle;
+    options: MenuOptions; 
+    /**
      * @constructor
-     * The text is its own unique string array
-     * Params is its own array 
-     * @param text Is an Array that contains the text in a simple array format not in an object
-     * @param parmas Is an object that contains the formatting for the text
      */
-	constructor(text, params) {
-		this._text = text;
+    constructor(title: MenuTitle, options: MenuOptions) {
+        this.title = title;
+        this.options = options;
+    }
+    /**
+     * Wrapper, Changes the selected menu option
+     *
+     * @method changeOption()
+     * @param {boolean} moveDown Is the menu option moving down
+     */
+    changeOption(moveDown: boolean) {
+        this.options.changeOption(moveDown);
+    }
+    /**
+     * Wrapper, Executes a function linked to a menu text option
+     *
+     * @method executeAction()
+     */
+    executeAction() {
+        this.options.executeAction();
+    }
+    /**
+     * Renders the menu options
+     *
+     * @method render()
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    render(ctx) {
+        let center = Utils.getCanvasCenter();
+        let textPositions = this.getHeightPositions(this.options.text.length + 1);
+        this.title.render(ctx, center.x, textPositions[0])
+        textPositions.splice(0, 1);
+        this.options.render(ctx, center.x, textPositions);
+    };
+    /**
+     * Gets the height positions based on the number of text items in the current menu._text
+     * 
+     * @method getHeightPositions()
+     * @param event The keyboard event
+     * @return {number} textCount Number of menu options
+     * @private
+     */
+    private getHeightPositions(textCount: number){
+        let size = Utils.getCanvasSize(); // todo create canvas class
+        let division = (size.height) / textCount;
 
-		this._font = params.font;
-		this._fontSize = params.fontSize;
-		this._fontColour = params.fontColour;
-		this._textAlign = params.textAlign;
-		this._backgroundColour = params.backgroundColour;
-		this._selectedText = 0;
-	}
+        let array = [];
+        for(let i = 0; i < textCount; i++) {
+            array.push((division * i) + (division / 2));
+        }
+        return array;
+    }
 }
 /// <reference path="../../references.ts" />
 /**
@@ -811,7 +862,6 @@ class MenuManager {
 		shift: 16,
 		escape: 27,
 	}
-
 	constructor(menus, settings) {
 		this._menus = menus;
 		this._keyType = settings.keyType;
@@ -827,7 +877,6 @@ class MenuManager {
 	changeMenu(menuIndex: number){
 		this._menuIndex = menuIndex;
 	}
-
 	 /**
      * Renders the current menu to be shown
      * This does not render
@@ -837,29 +886,9 @@ class MenuManager {
      * @param ctx - canvas 2d context
      */
 	render(ctx){
-		let menu  = this._menus[this._menuIndex]; 
-		// TODO CanvasManager
-		let center = Utils.getCanvasCenter();
-		let textToRender = menu._text;
-		let textPositions = this.getHeightPositions(textToRender.length + 1);
-
-		ctx.fillStyle = menu._fontColour;
-		ctx.textAlign = menu._textAlign;
-
-		ctx.font = menu._font;
-		for(let t = 0; t < textToRender.length; t++){
-			let text ="";
-			if(this._menus[this._menuIndex]._selectedText === t){
-				text += `< $(textToRender[t]) >`;
-			}
-			else{
-				text += textToRender[t];
-			}
-
-			ctx.fillText(text, center.x, textPositions[t+1]);
-		}
+		let menu = this._menus[this._menuIndex]; 
+        menu.render(ctx);
 	}
-
 	 /**
      * Changes the current selectedText item in the current menu
      * 
@@ -869,21 +898,22 @@ class MenuManager {
 	changeSelectedText(textIndex) {
 		this._menus[this._menuIndex]._selectedText = textIndex
 	}
-
-
 	/**
      * When a keyboard event occurs this method will be triggered
      * Only supports Up, Down and Enter currently 
      *
-     * @method onEvent()
+     * @method onKeyPress()
      * @param event The keyboard event
      */
-	onEvent(event: KeyboardEvent){
+	onKeyPress(event: KeyboardEvent){
+        let menu = this._menus[this._menuIndex]; 
 		switch (event.keyCode) {
 			case this._keycodes[this._keyType].up: 
+                menu.changeOption(false);
 				break;
 			
 			case this._keycodes[this._keyType].down:
+                menu.changeOption(true);
 				break;
 
 			case this._keycodes[this._keyType].left: // Left
@@ -893,28 +923,135 @@ class MenuManager {
 				break;
 
 			case this._keycodes.enter: // Enter
+                menu.executeAction();
 				break;
 		}
 	}
-
-	/**
-     * Gets the height positions based on the number of text items in the current menu._text
-     * TODO CanvasManager	
-     * Commented out due to it breaking the doc generator
-     * @method onEvent()
-     * @param event The keyboard event
-     * @return {Array}
+}
+/// <reference path="../../references.ts" />
+/**
+ * Creates a MenuOptions object
+ *
+ * @class MenuOptions
+ */
+class MenuOptions extends FontBase {
+    /**
+     * The text to be rendered
+     *
+     * @property text
+     * @type string[]
      */
-	getHeightPositions(textCount: number){
-		let size = Utils.getCanvasSize(); // todo create canvas class
-		let division = (size.height) / textCount;
+    text: string[];
+    /**
+     * The text to be rendered
+     *
+     * @property text
+     * @type []
+     */
+    actions: any[];
+    /**
+     * Selected Option, when the menu is rendered if the option is selected it will display < text > 
+     *
+     * @property selectedOption
+     * @type number
+    */
+    selectedOption: number;
+    /**
+     * @constructor
+     */
+    constructor(font: string, fontSize: number, fontColour: string,
+        textAlign: string, text: string[], actions: any[]) {
+        super(font, fontSize, fontColour, textAlign);
+        this.text = text;
+        this.actions = actions;
+        this.selectedOption = 0;
+    }
+    /**
+     * Executes a function linked to a menu text option
+     *
+     * @method executeAction()
+     */
+    executeAction() {
+        this.actions[this.selectedOption]();
+    }
+    /**
+     * Changes the selected menu option
+     *
+     * @method changeOption()
+     * @param {boolean} moveDown Is the menu option moving down
+     */
+    changeOption(moveDown: boolean) {
+        if (moveDown) {
+            this.selectedOption++;
+            if (this.selectedOption >= this.text.length) {
+                this.selectedOption = 0;
+            }
+        } else {
+            this.selectedOption--;
+            if (this.selectedOption < 0) {
+                this.selectedOption = this.text.length - 1;
+            }
+        }
+    }
+    /**
+     * Renders the menu options
+     *
+     * Commented out due to it breaking the doc generator
+     * @method render()
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     * @param {number} x X position
+     * @param {number} y Y position
+     */
+    render(ctx, x, yPositions) {
+        super.applyFontSettings(ctx);
 
-		let array = [];
-		for(let i = 0; i < textCount; i++) {
-			array.push((division * i) + (division / 2));
-		}
-		return array;
-	}
+        for (let t = 0; t < this.text.length; t++) {
+            let text = "";
+            if (this.selectedOption === t) {
+                text += '< ' + this.text[t] + ' >';
+            }
+            else {
+                text += this.text[t];
+            }
+
+            ctx.fillText(text, x, yPositions[t]);
+        }
+    }
+}
+/// <reference path="../../references.ts" />
+/**
+ * Creates a MenuTitle object
+ *
+ * @class MenuTitle
+ */
+class MenuTitle extends FontBase {
+    /**
+     * The text to be rendered
+     * @property text
+     * @type string
+     */
+    text: string;
+    /**
+     * @constructor
+     */
+    constructor(font: string, fontSize: number, fontColour: string,
+        textAlign: string, text: string) {
+        super(font, fontSize, fontColour, textAlign);
+        this.text = text;
+    }
+    /**
+     * Renders the the menu title
+     *
+     * Commented out due to it breaking the doc generator
+     * @method render()
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     * @param {number} x X position
+     * @param {number} y Y position
+     */
+    render(ctx, x, y) {
+        super.applyFontSettings(ctx);
+        ctx.fillText(this.text, x, y);
+    }
 }
 class Utils{
 	 /**

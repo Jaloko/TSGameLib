@@ -250,6 +250,45 @@ theImage.onload = function() {
     render(); 
 }*/
 
+/* Menu test code */
+var ctx = document.getElementById('canvas').getContext('2d');
+var mo = new MenuOptions(
+    // Font properties
+    'Verdana',
+    23,
+    '#fff',
+    'center', 
+    // Menu options
+    ['Option 1', 'Option 2', 'Option 3'],
+    // Menu actions
+    [
+        function() {
+            console.log('Option 1');
+        }, 
+        function() {
+            console.log('Option 2');
+        },
+        function() {
+            console.log('Option 3');
+        }
+    ]
+);
+var m = new Menu(new MenuTitle('Verdana', 32,'#fff', 'center', 'Game Title'), mo);
+var mm = new MenuManager([m], { keyType: 'wasd'});
+
+function render() {
+    ctx.fillStyle="#000";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    mm.render(ctx);
+    requestAnimationFrame(render);  
+}
+
+window.addEventListener('keydown', function(e){
+    mm.onKeyPress(e);
+});
+
+render();
+
 /**
 * Execute all tests
 **/

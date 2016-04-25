@@ -1,72 +1,65 @@
 /// <reference path="../../references.ts" />
 /**
- * Creates a Menu Object
- * @class
+ * Creates a Menu object
+ *
+ * @class Menu
  */
 class Menu{
-	/*
-	* Stores the font for the menu
-	* @property font
-	* @type string
-	*/
-	_font: string; 
-	/*
-	* Font Size for the text to be rendered
-	* @property fontSize
-	* @type number
-	*/
-	_fontSize: number;
-
-	/*
-	* Stores the font colour
-	* @property _fontColour
-	* @type string
-	*/
-	_fontColour: string;
-	/*
-	* The alignment of the text
-	* @property _textAlign
-	* @type string
-	*/
-	_textAlign: string;
-
-	/*
-	* Menu backgrounds could change storing the hex value allows us to change the colour at will
-	* @property backgroundColour
-	* @type string
-	*/
-	_backgroundColour: string;
-
-	/*
-	* The text to be rendered
-	* @property _text
-	* @type string[]
-	*/
-	_text: string[];
-
-	/*
-	* Selected Text, when the menu is rendered if the text is selected it will display < text > 
-	* @property _selectedText
-	* @type number
-	*/
-
-	_selectedText:number;
-
-	/**
+    title: MenuTitle;
+    options: MenuOptions; 
+    /**
      * @constructor
-     * The text is its own unique string array
-     * Params is its own array 
-     * @param text Is an Array that contains the text in a simple array format not in an object
-     * @param parmas Is an object that contains the formatting for the text
      */
-	constructor(text, params) {
-		this._text = text;
+    constructor(title: MenuTitle, options: MenuOptions) {
+        this.title = title;
+        this.options = options;
+    }
+    /**
+     * Wrapper, Changes the selected menu option
+     *
+     * @method changeOption()
+     * @param {boolean} moveDown Is the menu option moving down
+     */
+    changeOption(moveDown: boolean) {
+        this.options.changeOption(moveDown);
+    }
+    /**
+     * Wrapper, Executes a function linked to a menu text option
+     *
+     * @method executeAction()
+     */
+    executeAction() {
+        this.options.executeAction();
+    }
+    /**
+     * Renders the menu options
+     *
+     * @method render()
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    render(ctx) {
+        let center = Utils.getCanvasCenter();
+        let textPositions = this.getHeightPositions(this.options.text.length + 1);
+        this.title.render(ctx, center.x, textPositions[0])
+        textPositions.splice(0, 1);
+        this.options.render(ctx, center.x, textPositions);
+    };
+    /**
+     * Gets the height positions based on the number of text items in the current menu._text
+     * 
+     * @method getHeightPositions()
+     * @param event The keyboard event
+     * @return {number} textCount Number of menu options
+     * @private
+     */
+    private getHeightPositions(textCount: number){
+        let size = Utils.getCanvasSize(); // todo create canvas class
+        let division = (size.height) / textCount;
 
-		this._font = params.font;
-		this._fontSize = params.fontSize;
-		this._fontColour = params.fontColour;
-		this._textAlign = params.textAlign;
-		this._backgroundColour = params.backgroundColour;
-		this._selectedText = 0;
-	}
+        let array = [];
+        for(let i = 0; i < textCount; i++) {
+            array.push((division * i) + (division / 2));
+        }
+        return array;
+    }
 }
