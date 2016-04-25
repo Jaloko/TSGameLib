@@ -262,19 +262,24 @@ var mo = new MenuOptions(
     ['Option 1', 'Option 2', 'Option 3'],
     // Menu actions
     [
-        function() {
+        function(menuManager) {
+            menuManager.changeMenu(0);
             console.log('Option 1');
         }, 
-        function() {
+        function(menuManager) {
+            menuManager.changeMenu(1);
             console.log('Option 2');
         },
-        function() {
+        function(menuManager) {
+            menuManager.changeMenu(2);
             console.log('Option 3');
         }
     ]
 );
 var m = new Menu(new MenuTitle('Verdana', 32,'#fff', 'center', 'Game Title'), mo);
-var mm = new MenuManager([m], { keyType: 'wasd'});
+var m2 = new Menu(new MenuTitle('Verdana', 32,'#fff', 'center', 'Menu 2'), mo);
+var m3 = new Menu(new MenuTitle('Verdana', 32,'#fff', 'center', 'Menu 3'), mo);
+var mm = new MenuManager([m, m2, m3], { keyType: 'wasd'});
 
 function render() {
     ctx.fillStyle="#000";

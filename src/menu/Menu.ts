@@ -5,7 +5,19 @@
  * @class Menu
  */
 class Menu{
+    /**
+     * Stores menu title options
+     *
+     * @property title
+     * @type MenuTitle
+     */
     title: MenuTitle;
+    /**
+     * Stores menu options
+     *
+     * @property options
+     * @type MenuOptions
+     */
     options: MenuOptions; 
     /**
      * @constructor
@@ -18,18 +30,19 @@ class Menu{
      * Wrapper, Changes the selected menu option
      *
      * @method changeOption()
-     * @param {boolean} moveDown Is the menu option moving down
+     * @param {number} val Changes the selected menu option
      */
-    changeOption(moveDown: boolean) {
-        this.options.changeOption(moveDown);
+    changeOption(val: number) {
+        this.options.changeOption(val);
     }
     /**
      * Wrapper, Executes a function linked to a menu text option
      *
      * @method executeAction()
+     * @param {MenuManager} menuManager MenuManager is passed down so that menu options can change the menu selected
      */
-    executeAction() {
-        this.options.executeAction();
+    executeAction(menuManager: MenuManager) {
+        this.options.executeAction(menuManager);
     }
     /**
      * Renders the menu options

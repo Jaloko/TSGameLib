@@ -103,11 +103,11 @@ class MenuManager {
         let menu = this._menus[this._menuIndex]; 
 		switch (event.keyCode) {
 			case this._keycodes[this._keyType].up: 
-                menu.changeOption(false);
+                menu.changeOption(-1);
 				break;
 			
 			case this._keycodes[this._keyType].down:
-                menu.changeOption(true);
+                menu.changeOption(+1);
 				break;
 
 			case this._keycodes[this._keyType].left: // Left
@@ -117,7 +117,7 @@ class MenuManager {
 				break;
 
 			case this._keycodes.enter: // Enter
-                menu.executeAction();
+                menu.executeAction(this);
 				break;
 		}
 	}

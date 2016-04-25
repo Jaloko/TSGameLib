@@ -7,6 +7,7 @@
 class MenuTitle extends FontBase {
     /**
      * The text to be rendered
+     *
      * @property text
      * @type string
      */

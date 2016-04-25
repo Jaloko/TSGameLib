@@ -40,27 +40,23 @@ class MenuOptions extends FontBase {
      * Executes a function linked to a menu text option
      *
      * @method executeAction()
+     * @param {MenuManager} menuManager MenuManager is passed down so that menu options can change the menu selected
      */
-    executeAction() {
-        this.actions[this.selectedOption]();
+    executeAction(menuManager: MenuManager) {
+        this.actions[this.selectedOption](menuManager);
     }
     /**
      * Changes the selected menu option
      *
      * @method changeOption()
-     * @param {boolean} moveDown Is the menu option moving down
+     * @param {number} val Changes the selected menu option
      */
-    changeOption(moveDown: boolean) {
-        if (moveDown) {
-            this.selectedOption++;
-            if (this.selectedOption >= this.text.length) {
-                this.selectedOption = 0;
-            }
-        } else {
-            this.selectedOption--;
-            if (this.selectedOption < 0) {
-                this.selectedOption = this.text.length - 1;
-            }
+    changeOption(val: number) {
+        this.selectedOption += val;
+        if (this.selectedOption < 0) {
+            this.selectedOption = this.text.length - 1;
+        } else if (this.selectedOption >= this.text.length) {
+            this.selectedOption = 0;
         }
     }
     /**

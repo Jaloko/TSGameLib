@@ -746,7 +746,19 @@ abstract class FontBase {
  * @class Menu
  */
 class Menu{
+    /**
+     * Stores menu title options
+     *
+     * @property title
+     * @type MenuTitle
+     */
     title: MenuTitle;
+    /**
+     * Stores menu options
+     *
+     * @property options
+     * @type MenuOptions
+     */
     options: MenuOptions; 
     /**
      * @constructor
@@ -759,18 +771,19 @@ class Menu{
      * Wrapper, Changes the selected menu option
      *
      * @method changeOption()
-     * @param {boolean} moveDown Is the menu option moving down
+     * @param {number} val Changes the selected menu option
      */
-    changeOption(moveDown: boolean) {
-        this.options.changeOption(moveDown);
+    changeOption(val: number) {
+        this.options.changeOption(val);
     }
     /**
      * Wrapper, Executes a function linked to a menu text option
      *
      * @method executeAction()
+     * @param {MenuManager} menuManager MenuManager is passed down so that menu options can change the menu selected
      */
-    executeAction() {
-        this.options.executeAction();
+    executeAction(menuManager: MenuManager) {
+        this.options.executeAction(menuManager);
     }
     /**
      * Renders the menu options
@@ -909,11 +922,11 @@ class MenuManager {
         let menu = this._menus[this._menuIndex]; 
 		switch (event.keyCode) {
 			case this._keycodes[this._keyType].up: 
-                menu.changeOption(false);
+                menu.changeOption(-1);
 				break;
 			
 			case this._keycodes[this._keyType].down:
-                menu.changeOption(true);
+                menu.changeOption(+1);
 				break;
 
 			case this._keycodes[this._keyType].left: // Left
@@ -923,7 +936,7 @@ class MenuManager {
 				break;
 
 			case this._keycodes.enter: // Enter
-                menu.executeAction();
+                menu.executeAction(this);
 				break;
 		}
 	}
@@ -970,27 +983,23 @@ class MenuOptions extends FontBase {
      * Executes a function linked to a menu text option
      *
      * @method executeAction()
+     * @param {MenuManager} menuManager MenuManager is passed down so that menu options can change the menu selected
      */
-    executeAction() {
-        this.actions[this.selectedOption]();
+    executeAction(menuManager: MenuManager) {
+        this.actions[this.selectedOption](menuManager);
     }
     /**
      * Changes the selected menu option
      *
      * @method changeOption()
-     * @param {boolean} moveDown Is the menu option moving down
+     * @param {number} val Changes the selected menu option
      */
-    changeOption(moveDown: boolean) {
-        if (moveDown) {
-            this.selectedOption++;
-            if (this.selectedOption >= this.text.length) {
-                this.selectedOption = 0;
-            }
-        } else {
-            this.selectedOption--;
-            if (this.selectedOption < 0) {
-                this.selectedOption = this.text.length - 1;
-            }
+    changeOption(val: number) {
+        this.selectedOption += val;
+        if (this.selectedOption < 0) {
+            this.selectedOption = this.text.length - 1;
+        } else if (this.selectedOption >= this.text.length) {
+            this.selectedOption = 0;
         }
     }
     /**
@@ -1027,6 +1036,7 @@ class MenuOptions extends FontBase {
 class MenuTitle extends FontBase {
     /**
      * The text to be rendered
+     *
      * @property text
      * @type string
      */
