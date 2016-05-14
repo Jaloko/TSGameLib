@@ -255,7 +255,7 @@ var ctx = document.getElementById('canvas').getContext('2d');
 var mo = new MenuOptions(
     // Font properties
     'Verdana',
-    23,
+    50,
     '#fff',
     'center', 
     // Menu options
@@ -285,12 +285,21 @@ function render() {
     ctx.fillStyle="#000";
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     mm.render(ctx);
-    requestAnimationFrame(render);  
+    requestAnimationFrame(render);
 }
 
 window.addEventListener('keydown', function(e){
     mm.onKeyPress(e);
 });
+
+window.addEventListener('mousedown', function(e) {
+    mm.onMouseDown(e, ctx);
+});
+
+window.addEventListener('mousemove', function(e) {
+    mm.onMouseMove(e, ctx);
+});
+
 
 render();
 

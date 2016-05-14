@@ -777,6 +777,15 @@ class Menu{
         this.options.changeOption(val);
     }
     /**
+     * Wrapper, Sets the selected menu option
+     *
+     * @method setOption()
+     * @param {number} val Sets the selected menu option
+     */
+    setOption(val: number) {
+        this.options.setOption(val);
+    }
+    /**
      * Wrapper, Executes a function linked to a menu text option
      *
      * @method executeAction()
@@ -791,13 +800,69 @@ class Menu{
      * @method render()
      * @param {CanvasRenderingContext2D} ctx The canvas context
      */
-    render(ctx) {
+    render(ctx: CanvasRenderingContext2D) {
         let center = Utils.getCanvasCenter();
         let textPositions = this.getHeightPositions(this.options.text.length + 1);
         this.title.render(ctx, center.x, textPositions[0])
         textPositions.splice(0, 1);
         this.options.render(ctx, center.x, textPositions);
     };
+    /**
+     * If the mouse position collides with the selected text option return true
+     *
+     * @method checkTextCollision()
+     * @param {MouseEvent} event The mouse event
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     * @return {boolean} is the mouse position collision with the selected text options
+     */
+    checkTextCollision(event: MouseEvent, ctx: CanvasRenderingContext2D) {
+        // Left click
+        if (event.buttons === 1) {
+            let center = Utils.getCanvasCenter();
+            let textPositions = this.getHeightPositions(this.options.text.length + 1);
+            // Remove title position
+            textPositions.splice(0, 1);
+            // Get selected text rectangle bounds
+            let textWidth = ctx.measureText(this.options.getSelected()).width;
+            let textHeight = this.options.fontSize * 2;
+            let pos = new Point(center.x - (textWidth / 2), textPositions[this.options.selectedOption] - (textHeight / 2));
+            let size = new Size(textWidth, textHeight);
+
+            // Check collision with text bounds and mouse position
+            if (new Rectangle(pos, size).collides(new Point(event.clientX, event.clientY))) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Change option based on mouse position
+     *
+     * @method changeOptionWithMouse()
+     * @param {MouseEvent} event The mouse event
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    changeOptionWithMouse(event: MouseEvent, ctx: CanvasRenderingContext2D) {
+        let center = Utils.getCanvasCenter();
+        let textPositions = this.getHeightPositions(this.options.text.length + 1);
+        // Remove title position
+        textPositions.splice(0, 1);
+        for (let i = 0; i < this.options.text.length; i++) {
+            // Get selected text rectangle bounds
+
+            let textWidth = ctx.measureText(this.options.getSelected()).width;
+            let textHeight = this.options.fontSize * 2;
+            let pos = new Point(center.x - (textWidth / 2), textPositions[i] - (textHeight / 2));
+            let size = new Size(textWidth, textHeight);
+
+            // Check collision with text bounds and mouse position
+            if (new Rectangle(pos, size).collides(new Point(event.clientX, event.clientY))) {
+                this.options.setOption(i);
+                break;
+            }
+        }
+    }
     /**
      * Gets the height positions based on the number of text items in the current menu._text
      * 
@@ -892,13 +957,12 @@ class MenuManager {
 	}
 	 /**
      * Renders the current menu to be shown
-     * This does not render
-     * TODO: CanvasManager
+     *
      * Commented out due to it breaking the doc generator
      * @method render()
-     * @param ctx - canvas 2d context
+     * @param {CanvasRenderingContext2D} ctx The canvas context
      */
-	render(ctx){
+    render(ctx: CanvasRenderingContext2D) {
 		let menu = this._menus[this._menuIndex]; 
         menu.render(ctx);
 	}
@@ -908,7 +972,7 @@ class MenuManager {
      * @method changeSelectedText()
      * @param textIndex  Index of the text item
      */
-	changeSelectedText(textIndex) {
+	changeSelectedText(textIndex: number) {
 		this._menus[this._menuIndex]._selectedText = textIndex
 	}
 	/**
@@ -940,6 +1004,30 @@ class MenuManager {
 				break;
 		}
 	}
+    /**
+     * When the mouse down event occurs this method will be triggered
+     *
+     * @method onMouseDown()
+     * @param {MouseEvent} event The mouse event
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    onMouseDown(event: MouseEvent, ctx: CanvasRenderingContext2D) {
+        let menu = this._menus[this._menuIndex]; 
+        if(menu.checkTextCollision(event, ctx)) {
+            menu.executeAction(this);
+        }
+    }
+    /**
+     * When the mouse move event occurs this method will be triggered
+     *
+     * @method onMouseMove()
+     * @param {MouseEvent} event The mouse event
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    onMouseMove(event: MouseEvent, ctx: CanvasRenderingContext2D) {
+        let menu = this._menus[this._menuIndex];      
+        menu.changeOptionWithMouse(event, ctx);
+    }
 }
 /// <reference path="../../references.ts" />
 /**
@@ -1003,15 +1091,36 @@ class MenuOptions extends FontBase {
         }
     }
     /**
+     * Sets the selected menu option
+     *
+     * @method setOption()
+     * @param {number} val Sets the selected menu option
+     */
+    setOption(val: number) {
+        this.selectedOption = val;
+        if (this.selectedOption >= this.text.length || this.selectedOption < 0) {
+            this.selectedOption = 0;
+        }
+    }
+    /**
+     * Returns the selected option
+     *
+     * @method getSelected()
+     * @return {string} text The selected text string
+     */
+    getSelected() {
+        return this.text[this.selectedOption];
+    }
+    /**
      * Renders the menu options
      *
      * Commented out due to it breaking the doc generator
      * @method render()
      * @param {CanvasRenderingContext2D} ctx The canvas context
      * @param {number} x X position
-     * @param {number} y Y position
+     * @param {number[]} yPositions Y positions
      */
-    render(ctx, x, yPositions) {
+    render(ctx: CanvasRenderingContext2D, x: number, yPositions: number[]) {
         super.applyFontSettings(ctx);
 
         for (let t = 0; t < this.text.length; t++) {

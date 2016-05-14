@@ -73,13 +73,12 @@ class MenuManager {
 	}
 	 /**
      * Renders the current menu to be shown
-     * This does not render
-     * TODO: CanvasManager
+     *
      * Commented out due to it breaking the doc generator
      * @method render()
-     * @param ctx - canvas 2d context
+     * @param {CanvasRenderingContext2D} ctx The canvas context
      */
-	render(ctx){
+    render(ctx: CanvasRenderingContext2D) {
 		let menu = this._menus[this._menuIndex]; 
         menu.render(ctx);
 	}
@@ -89,7 +88,7 @@ class MenuManager {
      * @method changeSelectedText()
      * @param textIndex  Index of the text item
      */
-	changeSelectedText(textIndex) {
+	changeSelectedText(textIndex: number) {
 		this._menus[this._menuIndex]._selectedText = textIndex
 	}
 	/**
@@ -121,4 +120,28 @@ class MenuManager {
 				break;
 		}
 	}
+    /**
+     * When the mouse down event occurs this method will be triggered
+     *
+     * @method onMouseDown()
+     * @param {MouseEvent} event The mouse event
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    onMouseDown(event: MouseEvent, ctx: CanvasRenderingContext2D) {
+        let menu = this._menus[this._menuIndex]; 
+        if(menu.checkTextCollision(event, ctx)) {
+            menu.executeAction(this);
+        }
+    }
+    /**
+     * When the mouse move event occurs this method will be triggered
+     *
+     * @method onMouseMove()
+     * @param {MouseEvent} event The mouse event
+     * @param {CanvasRenderingContext2D} ctx The canvas context
+     */
+    onMouseMove(event: MouseEvent, ctx: CanvasRenderingContext2D) {
+        let menu = this._menus[this._menuIndex];      
+        menu.changeOptionWithMouse(event, ctx);
+    }
 }

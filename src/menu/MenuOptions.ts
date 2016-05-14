@@ -60,15 +60,36 @@ class MenuOptions extends FontBase {
         }
     }
     /**
+     * Sets the selected menu option
+     *
+     * @method setOption()
+     * @param {number} val Sets the selected menu option
+     */
+    setOption(val: number) {
+        this.selectedOption = val;
+        if (this.selectedOption >= this.text.length || this.selectedOption < 0) {
+            this.selectedOption = 0;
+        }
+    }
+    /**
+     * Returns the selected option
+     *
+     * @method getSelected()
+     * @return {string} text The selected text string
+     */
+    getSelected() {
+        return this.text[this.selectedOption];
+    }
+    /**
      * Renders the menu options
      *
      * Commented out due to it breaking the doc generator
      * @method render()
      * @param {CanvasRenderingContext2D} ctx The canvas context
      * @param {number} x X position
-     * @param {number} y Y position
+     * @param {number[]} yPositions Y positions
      */
-    render(ctx, x, yPositions) {
+    render(ctx: CanvasRenderingContext2D, x: number, yPositions: number[]) {
         super.applyFontSettings(ctx);
 
         for (let t = 0; t < this.text.length; t++) {
