@@ -12,7 +12,7 @@ class ImageManager {
      * 
      * This property is undefined if no images have been loaded.
      */
-    images: { [name: string]: HTMLImageElement };
+    images: { [name: string]: HTMLImageElement } = {};
     
     /**
      * @constructor
